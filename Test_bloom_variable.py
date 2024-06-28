@@ -22,16 +22,16 @@ def find_q_k_with_theory(N):
     """
     # ------------------- Below is the way to calculate the optimal q,k with given n
     # First, initialize those parameters
-    min_prob_fp = prob_fp(1,1,N)
-    optimal_q = 1
-    optimal_k = 1
+    min_prob_fp = prob_fp(20,10*N,N)
+    optimal_q = 10*N
+    optimal_k = 20
     
     # Then, create loop to determine the optimal q, k.
     # Known that:
     #   q is the amount of bits represent Bloom Filter, 1 <= q <= N
     #   k is the amount of hash functions in Bloom Filter, 1 <= k <= q
-    for q in range(1, N + 1):
-        for k in range(1, q + 1):
+    for q in range(1, 10*N + 1):
+        for k in range(1, 20):
             temp = prob_fp(k, q, N)
             # print(f"With q = {q}, k = {k}, Pr = {temp}")
             if min_prob_fp > temp:
@@ -81,9 +81,9 @@ def h(s, i, q):
     # this have weakness that the return hashed integers of a string S for k hash functions will have adjacent indexes
     
     # N = 0
-    # for i in range(len(S)):
-    #     N += ord(S[i]) - ord('A')
-    # N = (N + k) % m
+    # for ind in range(len(s)):
+    #     N += ord(s[ind]) - ord('A')
+    # N = (N + i) % q
     # return N
     
 
@@ -162,11 +162,17 @@ def find_q_k_with_db(q, k, Dv, vec_key):
     ret_k = k
     
     # To avoid q_star, k_star have negative value, use these variables to make adjustment in below loop
-    min_range_k = abs(0 - ret_k)
-    min_range_q = abs(0 - ret_q)
+    min_range_k = abs(min(0, ret_k - delta))
+    min_range_q = abs(min(0, ret_q - delta))
     
-    for k_star in range(k - delta + min_range_q, k + delta + 1 + min_range_q):
-        for q_star in range(q - delta + min_range_k, q + delta + 1 + min_range_k):
+    # Because the range start from 1 for both q, k
+    if min_range_k != 0:
+        min_range_k = min_range_k + 1
+    if min_range_q != 0:
+        min_range_q = min_range_q + 1
+    
+    for k_star in range(k - delta + min_range_k, k + delta + 1 + min_range_k):
+        for q_star in range(q - delta + min_range_q, q + delta + 1 + min_range_q):
             total_false_positive = 0
             
             for i in Dv:
@@ -185,10 +191,12 @@ def find_q_k_with_db(q, k, Dv, vec_key):
                     # For example, a dataset include unique names and their correspond age. The query will be: Does 'A' have age v?
                     if check(bloom, random_key, k_star, q_star) != (random_key in Dv[i]):
                         count += 1
-
+                        
+                # Update the total_false-positive
                 false_positive = count/1000
                 total_false_positive += false_positive
             
+            # Update optimal q and k
             if min_total_fp > total_false_positive:
                 min_total_fp = total_false_positive
                 ret_q = q_star
@@ -205,8 +213,8 @@ def create_Dv(db):
         else:
             D[db[i]] = [i]
         D[0] = D[0] + [i]
-    for i in D:
-        print(f"Records with value {i}: {D[i]}")
+    # for i in D:
+    #     print(f"Records with value {i}: {D[i]}")
     return D
 
 def read_db():
@@ -221,8 +229,11 @@ def read_db():
     # --------------------- Data imported-----------------
     # Define the range of rows to import (100 to 300, inclusive)
     # The range can be modified for other tests
-    start_row = 100
-    end_row = 300
+    # Random start_row from 1 to 100000
+    start_row = random.randint(1, 100000)
+    # Random end_row = start_row + random(1,3000)
+    end_row = start_row + random.randint(30,3000)
+
 
     # Calculate the number of rows to import
     num_rows = end_row - start_row + 1
@@ -254,7 +265,7 @@ if __name__ == "__main__":
     }
     
     vec_key, db, item_counts = read_db()
-    print(vec_key)
+    print(item_counts)
     # N = 50      # Since the range of ward in real dataset has maximum equals 50
     # desired_fp = 0.01
     # min_prob_fp, optimal_q, optimal_k = find_q_k_with_theory(item_counts, desired_fp)

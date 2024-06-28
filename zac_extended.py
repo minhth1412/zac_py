@@ -346,91 +346,91 @@ def verifyQ(cm, QC, Ret, proof_hat, pp):
 # --------------------------------------------
 
 # ------------- Main function -------------
-# if __name__ == "__main__":
+if __name__ == "__main__":
     
-#     # ------------- Initialize the start parameter and function call -------------
-#     # The number of records in database
-#     n = 7
-#     # The desired probability of false positive
-#     fp = 0.01
+    # ------------- Initialize the start parameter and function call -------------
+    # The number of records in database
+    n = 7
+    # The desired probability of false positive
+    fp = 0.01
     
-#     # Call the function to initialize the parameters for Bloom Filter
-#     m, k = init_para(n, fp)
+    # Call the function to initialize the parameters for Bloom Filter
+    m, k = init_para(n, fp)
     
-#     # Create database
-#     db = read_db()
+    # Create database
+    db = read_db()
     
-#     # Create Bloom Filter array with m bits 0
-#     bloom = [0] * m
+    # Create Bloom Filter array with m bits 0
+    bloom = [0] * m
     
-#     # Create dictionary D to store the records with the same value, range from 1 to n
-#     D = {0:[]}
+    # Create dictionary D to store the records with the same value, range from 1 to n
+    D = {0:[]}
     
-#     ### ---- pp <- ZAC.Init(1^lambda, n) ----
-#     # Create public parameters for ZAC scheme: pp, include:
-#     # m, k: the parameters for Bloom Filter
-#     # pp_PR: public parameters from pointproofs.py
-#     # This pp is not contain hash function(Different from paper), because the hash function is defined separately in a function
-#     #   in this file. And the scheme using hash function is quite different too.
-#     pp = {
-#         'm': m,
-#         'k': k,
-#         'bloom_vector': bloom,
-#         'pp_PR': init_pp(128, m)
-#         # 128 is the security parameter that is chosen based on the desired security level
-#     }
+    ### ---- pp <- ZAC.Init(1^lambda, n) ----
+    # Create public parameters for ZAC scheme: pp, include:
+    # m, k: the parameters for Bloom Filter
+    # pp_PR: public parameters from pointproofs.py
+    # This pp is not contain hash function(Different from paper), because the hash function is defined separately in a function
+    #   in this file. And the scheme using hash function is quite different too.
+    pp = {
+        'm': m,
+        'k': k,
+        'bloom_vector': bloom,
+        'pp_PR': init_pp(128, m)
+        # 128 is the security parameter that is chosen based on the desired security level
+    }
     
-#     # A random number r
-#     r = random.randint(1, pp['pp_PR']['p'] - 1)
-#     # ----------------------------------------------------------------------------
+    # A random number r
+    r = random.randint(1, pp['pp_PR']['p'] - 1)
+    # ----------------------------------------------------------------------------
     
-#     ## ---- cm <- ZKEDB.CommitDB(D, db, pp) ----
-#     cm = commit(D, db, r, pp)
-#     # for i in range(N + 1):
-#     #     if i in D:
-#     #         print(f"D[i]: {D[i]}")
-#     #     else:
-#     #         print(f"D[i]: {[]}")
-#     #     print(f"Commitment for key group {i}: {cm[i]}")
-    
-    
+    ## ---- cm <- ZKEDB.CommitDB(D, db, pp) ----
+    cm = commit(D, db, r, pp)
+    # for i in range(N + 1):
+    #     if i in D:
+    #         print(f"D[i]: {D[i]}")
+    #     else:
+    #         print(f"D[i]: {[]}")
+    #     print(f"Commitment for key group {i}: {cm[i]}")
     
     
-#     # ------------- Place to test -------------
-#     # Test set_to_bloom function
-#     # for key in db.keys():
-#     #     set_to_bloom(pp, key, k, m)
-    
-#     # Test the optimized parameters for Bloom Filter    
-#     print(f"Optimized size for Bloom Filter array: {m}")
-#     print(f"Optimized number of hash functions: {k}")
     
     
-#     # Test for proveQ function
-#     # The query Q1: Return the record with key x = 'a'.
-#     # Which can be [db[x]] if exists.
-#     # Otherwise, return [].
+    # ------------- Place to test -------------
+    # Test set_to_bloom function
+    # for key in db.keys():
+    #     set_to_bloom(pp, key, k, m)
     
-#     # Future work will change this QC into a function for checking query, and return the desired value.
-#     QC = 'a'
-#     Ret = query_db(QC, db)
-#     # Print Ret
-#     print(f"\nQuery result for key {QC}: {Ret}")
+    # Test the optimized parameters for Bloom Filter    
+    print(f"Optimized size for Bloom Filter array: {m}")
+    print(f"Optimized number of hash functions: {k}")
     
-#     # Create proof_hat for QC
-#     proof_hat = proveQ(cm, D, QC, db, r, pp)
-#     print(f"Proof_hat for query Q1: {proof_hat}")
     
-#     # Check the proof with verifyQ function
-#     res = verifyQ(cm, QC, Ret, proof_hat, pp)
+    # Test for proveQ function
+    # The query Q1: Return the record with key x = 'a'.
+    # Which can be [db[x]] if exists.
+    # Otherwise, return [].
     
-#     if res == True:
-#         # Announce that x is in db, and print the value of x
-#         print(f"Query Q1: {QC} is in the database.")
-#         print(f"Value of {QC}: {Ret[1]}")
-#     else:
-#         # Announce that x is not in db
-#         print(f"Query Q1: {QC} is not in the database.")
+    # Future work will change this QC into a function for checking query, and return the desired value.
+    QC = 'a'
+    Ret = query_db(QC, db)
+    # Print Ret
+    print(f"\nQuery result for key {QC}: {Ret}")
     
-#     print("End of file.")
-#     # -----------------------------------------
+    # Create proof_hat for QC
+    proof_hat = proveQ(cm, D, QC, db, r, pp)
+    print(f"Proof_hat for query Q1: {proof_hat}")
+    
+    # Check the proof with verifyQ function
+    res = verifyQ(cm, QC, Ret, proof_hat, pp)
+    
+    if res == True:
+        # Announce that x is in db, and print the value of x
+        print(f"Query Q1: {QC} is in the database.")
+        print(f"Value of {QC}: {Ret[1]}")
+    else:
+        # Announce that x is not in db
+        print(f"Query Q1: {QC} is not in the database.")
+    
+    print("End of file.")
+    # -----------------------------------------
