@@ -22,9 +22,9 @@ def find_q_k_with_theory(N):
     """
     # ------------------- Below is the way to calculate the optimal q,k with given n
     # First, initialize those parameters
-    min_prob_fp = prob_fp(20,10*N,N)
+    min_prob_fp = prob_fp(1,10*N,N)
     optimal_q = 10*N
-    optimal_k = 20
+    optimal_k = 1
     
     # Then, create loop to determine the optimal q, k.
     # Known that:
@@ -39,6 +39,7 @@ def find_q_k_with_theory(N):
                 optimal_q = q
                 optimal_k = k
     
+    # This is to check with the result that has been estimated in the thesis
     
     
     # ------------ Below is the way to calculate the optimal q,k with given n and fp
